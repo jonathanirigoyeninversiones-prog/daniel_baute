@@ -2,9 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>11 Reserva de Citas - Daniel Baute</title>
+    <title>Reserva de Citas - Daniel Baute</title>
     <style>
-        body { background-color: #000000; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/daniel_baute/logo-daniel-baute.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat; min-height: 100vh; margin: 0; font-family: sans-serif; }
+        body { background-color: #f2f1ed; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/albani_vegas/logo_albani_vegas.jpeg'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
         .container { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; max-width: 600px; margin: 40px auto; }
         .btn-cat, .btn-sub { padding: 10px; margin: 5px; cursor: pointer; border: 1px solid #d4af37; background: #fff; border-radius: 5px; }
         .btn-cat:hover, .btn-sub:hover { background: #d4af37; color: #fff; }
@@ -40,7 +40,7 @@
         import { getFirestore, doc, getDoc, collection, getDocs, addDoc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
 
-        // 1. Configuración Daniel Baute
+        // 1. Configuración Daniel Baute (Nueva base de datos)
         const configBaute = {
             apiKey: "AIzaSyDQYHhMJvbBlu6N8hfUNescTAD356GGUVk",
             authDomain: "daniel-baute.firebaseapp.com",
@@ -54,17 +54,17 @@
         const db = getFirestore(appBaute);
         const analytics = getAnalytics(appBaute);
 
-        // 2. Configuración Centro de Mando
+        // 2. Configuración Centro de Mando (Para el mantenimiento)
         const configControl = {apiKey: "AIzaSyA0DzUikltEZ4Iu1a3aRkCRr68jzuoTUyQ", authDomain: "master-web-admin.firebaseapp.com", projectId: "master-web-admin", storageBucket: "master-web-admin.firebasestorage.app", messagingSenderId: "641570363282", appId: "1:641570363282:web:b027b5c4c036a550b8534b"};
         const appControl = initializeApp(configControl, "control");
         const dbControl = getFirestore(appControl);
 
-        // 3. Verificación en tiempo real del interruptor
+        // 3. Verificación en tiempo real del interruptor (Apuntando a Baute en el Master Web)
         function verificarAcceso() {
-            const docRef = doc(dbControl, "Master_web", "daniel_baute");
+            const docRef = doc(dbControl, "Master_web", "daniel_baute"); // Asegúrate de crear este documento en tu Master Web
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists() && docSnap.data().activo === false) {
-                    document.body.innerHTML = "<h1 style='text-align:center; padding:50px; color:white;'>Sitio en mantenimiento. Vuelva pronto.</h1>";
+                    document.body.innerHTML = "<h1 style='text-align:center; padding:50px;'>Sitio en mantenimiento. Vuelva pronto.</h1>";
                 }
             });
         }
