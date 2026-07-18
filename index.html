@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Reserva de Citas - Daniel Baute</title>
     <style>
-        body { background-color: #f2f1ed; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/albani_vegas/logo_albani_vegas.jpeg'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
+        body { background-color: #000000; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/daniel_baute/logo-daniel-baute.jpg'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
         .container { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; max-width: 600px; margin: 40px auto; }
         .btn-cat, .btn-sub { padding: 10px; margin: 5px; cursor: pointer; border: 1px solid #d4af37; background: #fff; border-radius: 5px; }
         .btn-cat:hover, .btn-sub:hover { background: #d4af37; color: #fff; }
@@ -61,10 +61,10 @@
 
         // 3. Verificación en tiempo real del interruptor (Apuntando a Baute en el Master Web)
         function verificarAcceso() {
-            const docRef = doc(dbControl, "Master_web", "daniel_baute"); // Asegúrate de crear este documento en tu Master Web
+            const docRef = doc(dbControl, "Master_web", "daniel_baute");
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists() && docSnap.data().activo === false) {
-                    document.body.innerHTML = "<h1 style='text-align:center; padding:50px;'>Sitio en mantenimiento. Vuelva pronto.</h1>";
+                    document.body.innerHTML = "<h1 style='text-align:center; padding:50px; color:white;'>Sitio en mantenimiento. Vuelva pronto.</h1>";
                 }
             });
         }
