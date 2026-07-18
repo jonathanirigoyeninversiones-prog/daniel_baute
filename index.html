@@ -2,15 +2,15 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Reserva de Citas - Daniel Baute</title>
+    <title>zzz Reserva de Citas - Daniel Baute</title>
     <style>
-        body { background-color: #000000; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/daniel_baute/logo-daniel-baute.jpg'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
-        .container { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; max-width: 600px; margin: 40px auto; }
+        body { background-color: #000000; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/daniel_baute/logo-daniel-baute.jpg'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 100vh; margin: 0; font-family: sans-serif; color: #000; }
+        .container { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; max-width: 600px; margin: 40px auto; color: #000; }
         .btn-cat, .btn-sub { padding: 10px; margin: 5px; cursor: pointer; border: 1px solid #d4af37; background: #fff; border-radius: 5px; }
         .btn-cat:hover, .btn-sub:hover { background: #d4af37; color: #fff; }
         input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
         #modal-confirmacion { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal-contenido { background: white; padding: 30px; border-radius: 10px; text-align: center; }
+        .modal-contenido { background: white; padding: 30px; border-radius: 10px; text-align: center; color: #000; }
     </style>
 </head>
 <body>
@@ -40,7 +40,7 @@
         import { getFirestore, doc, getDoc, collection, getDocs, addDoc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-analytics.js";
 
-        // 1. Configuración Daniel Baute (Nueva base de datos)
+        // 1. Configuración Daniel Baute
         const configBaute = {
             apiKey: "AIzaSyDQYHhMJvbBlu6N8hfUNescTAD356GGUVk",
             authDomain: "daniel-baute.firebaseapp.com",
@@ -54,17 +54,17 @@
         const db = getFirestore(appBaute);
         const analytics = getAnalytics(appBaute);
 
-        // 2. Configuración Centro de Mando (Para el mantenimiento)
+        // 2. Configuración Centro de Mando
         const configControl = {apiKey: "AIzaSyA0DzUikltEZ4Iu1a3aRkCRr68jzuoTUyQ", authDomain: "master-web-admin.firebaseapp.com", projectId: "master-web-admin", storageBucket: "master-web-admin.firebasestorage.app", messagingSenderId: "641570363282", appId: "1:641570363282:web:b027b5c4c036a550b8534b"};
         const appControl = initializeApp(configControl, "control");
         const dbControl = getFirestore(appControl);
 
-        // 3. Verificación en tiempo real del interruptor (Apuntando a Baute en el Master Web)
+        // 3. Verificación en tiempo real del interruptor
         function verificarAcceso() {
             const docRef = doc(dbControl, "Master_web", "daniel_baute"); 
             onSnapshot(docRef, (docSnap) => {
                 if (docSnap.exists() && docSnap.data().activo === false) {
-                    document.body.innerHTML = "<h1 style='text-align:center; padding:50px;'>Sitio en mantenimiento. Vuelva pronto.</h1>";
+                    document.body.innerHTML = "<h1 style='text-align:center; padding:50px; color:white;'>Sitio en mantenimiento. Vuelva pronto.</h1>";
                 }
             });
         }
