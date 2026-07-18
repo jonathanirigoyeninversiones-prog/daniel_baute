@@ -2,66 +2,20 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>1 Reserva de Citas - Daniel Baute</title>
+    <title>Reserva de Citas - Daniel Baute</title>
     <style>
-        body { 
-            background-color: #000000; 
-            background-image: url('https://jonathanirigoyeninversiones-prog.github.io/daniel_baute/logo-daniel-baute.jpg'); 
-            background-size: contain; 
-            background-repeat: no-repeat; 
-            background-position: center; 
-            min-height: 100vh; 
-            margin: 0; 
-            font-family: 'Arial Black', Gadget, sans-serif; 
-            color: #ffffff; 
-        }
-        .container { 
-            background: rgba(0, 0, 0, 0.85); 
-            padding: 30px; 
-            border-radius: 0px; 
-            border-left: 5px solid #d4af37;
-            max-width: 600px; 
-            margin: 40px auto; 
-            color: #ffffff;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-        }
-        .btn-cat, .btn-sub { 
-            padding: 12px; 
-            margin: 5px; 
-            cursor: pointer; 
-            border: 1px solid #d4af37; 
-            background: #222; 
-            color: #fff;
-            text-transform: uppercase;
-            font-weight: bold;
-        }
-        .btn-cat:hover, .btn-sub:hover { background: #d4af37; color: #000; }
-        input { 
-            width: 100%; 
-            padding: 12px; 
-            margin: 10px 0; 
-            border: 1px solid #444; 
-            background: #111;
-            color: #fff;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #d4af37;
-            color: #000;
-            border: none;
-            font-weight: bold;
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-        #modal-confirmacion { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
-        .modal-contenido { background: #111; border: 1px solid #d4af37; padding: 30px; text-align: center; color: #fff; }
+        body { background-color: #000000; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/daniel_baute/logo-daniel-baute.jpg'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 100vh; margin: 0; font-family: sans-serif; color: #000; }
+        .container { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; max-width: 600px; margin: 40px auto; color: #000; }
+        .btn-cat, .btn-sub { padding: 10px; margin: 5px; cursor: pointer; border: 1px solid #d4af37; background: #fff; border-radius: 5px; }
+        .btn-cat:hover, .btn-sub:hover { background: #d4af37; color: #fff; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        #modal-confirmacion { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-contenido { background: white; padding: 30px; border-radius: 10px; text-align: center; color: #000; }
     </style>
 </head>
 <body>
     <div class="container" id="contenido-principal">
-        <h3 style="color: #d4af37; text-transform: uppercase;">Reserva tu cita</h3>
+        <h3>Reserva tu cita</h3>
         <input type="date" id="fecha-cita" onchange="validarDia()">
         <div id="msg-dia"></div>
         <div id="categorias-container" style="display:none; margin-top: 20px;"></div>
