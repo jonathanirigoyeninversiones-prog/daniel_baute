@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Panel Administrativo</title>
+    <title>Panel Administrativo - Baute</title>
     <style>
         body { font-family: sans-serif; padding: 20px; }
         #login-box { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 80vh; }
@@ -26,7 +26,7 @@
 </head>
 <body>
     <div id="login-box">
-        <h3>Acceso Administrativo</h3>
+        <h3>Acceso Administrativo - Baute</h3>
         <input type="email" id="user" placeholder="Correo">
         <input type="password" id="pass" placeholder="Contraseña">
         <button id="btn-entrar">Entrar</button>
@@ -58,8 +58,18 @@
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
         import { getFirestore, collection, getDocs, doc, deleteDoc, addDoc, updateDoc, setDoc, getDoc, query, where } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
         
-        const app = initializeApp({apiKey: "AIzaSyCqTluO4X3TScWCi1MuVaCh3_95H1S-EPw", authDomain: "albany-vegas.firebaseapp.com", projectId: "albany-vegas", storageBucket: "albany-vegas.firebasestorage.app", messagingSenderId: "733658747319", appId: "1:733658747319:web:189e5aaaf73beec19f9832"});
+        // 1. Configuración Daniel Baute
+        const firebaseConfig = {
+            apiKey: "AIzaSyDQYHhMJvbBlu6N8hfUNescTAD356GGUVk",
+            authDomain: "daniel-baute.firebaseapp.com",
+            projectId: "daniel-baute",
+            storageBucket: "daniel-baute.firebasestorage.app",
+            messagingSenderId: "651016786277",
+            appId: "1:651016786277:web:7976b91384ac710ae3518c"
+        };
+        const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app); // Necesario para el login
 
         window.agregarCategoria = async () => { const nombre = prompt("Nombre de la categoría:"); if(nombre) await addDoc(collection(db, "categorias"), {nombre}); cargarDatos(); };
         window.agregarServicio = async (cat) => { const nombre = prompt("Nombre del servicio:"); if(nombre) await addDoc(collection(db, "servicios"), {nombre, categoria: cat}); cargarDatos(); };
@@ -125,7 +135,7 @@
             const cats = await getDocs(collection(db, "categorias")), servs = await getDocs(collection(db, "servicios"));
             cats.forEach(cat => { let catNombre = cat.data().nombre, html = `<div class="cat-box"><div class="cat-header"><strong>${catNombre}</strong><div><button onclick="agregarServicio('${catNombre}')">+ Agregar Servicio</button><button onclick="modificarCategoria('${cat.id}', '${catNombre}')">Editar</button><button onclick="eliminarCategoria('${cat.id}')">Eliminar</button></div></div>`; servs.forEach(s => { if (s.data().categoria === catNombre) { html += `<div class="sub-item"><span>${s.data().nombre}</span><div><button onclick="modificarServicio('${s.id}')">Editar</button><button onclick="eliminarServicio('${s.id}')">Eliminar</button></div></div>`; } }); divCat.innerHTML += html + `</div>`; });
         };
-        document.getElementById('btn-entrar').addEventListener('click', async () => { try { await signInWithEmailAndPassword(getAuth(), document.getElementById('user').value, document.getElementById('pass').value); document.getElementById('login-box').style.display = 'none'; document.getElementById('admin-panel').style.display = 'block'; cargarDatos(); } catch (e) { alert("Error al entrar"); } });
+        document.getElementById('btn-entrar').addEventListener('click', async () => { try { await signInWithEmailAndPassword(auth, document.getElementById('user').value, document.getElementById('pass').value); document.getElementById('login-box').style.display = 'none'; document.getElementById('admin-panel').style.display = 'block'; cargarDatos(); } catch (e) { alert("Error al entrar"); } });
     </script>
 </body>
 </html>
