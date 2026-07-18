@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva de Citas - Albani Vega</title>
+    <style>
+        body { background-color: #f2f1ed; background-image: url('https://jonathanirigoyeninversiones-prog.github.io/albani_vegas/logo_albani_vegas.jpeg'); background-size: contain; background-repeat: no-repeat; background-position: center; min-height: 100vh; margin: 0; font-family: sans-serif; }
+        .container { background: rgba(255, 255, 255, 0.95); padding: 30px; border-radius: 15px; max-width: 600px; margin: 40px auto; }
+        .btn-cat, .btn-sub { padding: 10px; margin: 5px; cursor: pointer; border: 1px solid #d4af37; background: #fff; border-radius: 5px; }
+        .btn-cat:hover, .btn-sub:hover { background: #d4af37; color: #fff; }
+        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        #modal-confirmacion { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
+        .modal-contenido { background: white; padding: 30px; border-radius: 10px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container" id="contenido-principal">
+        <h3>Reserva tu cita</h3>
+        <input type="date" id="fecha-cita" onchange="validarDia()">
+        <div id="msg-dia"></div>
+        <div id="categorias-container" style="display:none; margin-top: 20px;"></div>
+        <div id="subcategorias-container" style="display:none; margin-top: 20px;"></div>
+        <div id="formulario-reserva" style="display:none; margin-top: 20px;">
+            <input type="text" id="nombre" placeholder="Nombre">
+            <input type="text" id="apellido" placeholder="Apellido">
+            <input type="tel" id="telefono" placeholder="Teléfono">
+            <input type="text" id="direccion" placeholder="Dirección">
+            <button onclick="solicitarCita()">Solicitar Cita</button>
+        </div>
+    </div>
+    <div id="modal-confirmacion">
+        <div class="modal-contenido">
+            <h3>Gracias por preferirnos</h3>
+            <p>En poco te contactaremos para confirmar la cita</p>
+            <button onclick="location.reload()">Aceptar</button>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, getDocs, addDoc, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
+
+        // 1. Configuración original
+        const configOriginal = {apiKey: "AIzaSyCqTluO4X3TScWCi1MuVaCh3_95H1S-EPw", authDomain: "albany-vegas.firebaseapp.com", projectId: "albany-vegas", storageBucket: "albany-vegas.firebasestorage.app", messagingSenderId: "733658747319", appId: "1:733658747319:web:189e5aaaf73beec19f9832"};
+        const appOriginal = initializeApp(configOriginal, "original");
+        const db = getFirestore(appOriginal);
+
+        // 2. Configuración Centro de Mando
+        const configControl = {apiKey: "AIzaSyA0DzUikltEZ4Iu1a3aRkCRr68jzuoTUyQ", authDomain: "master-web-admin.firebaseapp.com", projectId: "master-web-admin", storageBucket: "master-web-admin.firebasestorage.app", messagingSenderId: "641570363282", appId: "1:641570363282:web:b027b5c4c036a550b8534b"};
+        const appControl = initializeApp(configControl, "control");
+        const dbControl = getFirestore(appControl);
+
+        // 3. Verificación en tiempo real del interruptor
+        function verificarAcceso() {
+            const docRef = doc(dbControl, "Master_web", "albani_vegas");
+            onSnapshot(docRef, (docSnap) => {
+                if (docSnap.exists() && docSnap.data().activo === false) {
+                    document.body.innerHTML = "<h1 style='text-align:center; padding:50px;'>Sitio en mantenimiento. Vuelva pronto.</h1>";
+                }
+            });
+        }
+        verificarAcceso();
+
+        // --- Lógica original intacta ---
+        document.getElementById('fecha-cita').setAttribute('min', new Date().toISOString().split('T')[0]);
+        
+        window.validarDia = async () => {
+            const fechaVal = document.getElementById('fecha-cita').value;
+            const msg = document.getElementById('msg-dia');
+            const fechaSel = new Date(fechaVal + 'T00:00:00');
+            const hoy = new Date(); hoy.setHours(0,0,0,0);
+            
+            if (fechaSel < hoy) { msg.innerHTML = "No se puede reservar en días pasados."; return; }
+            
+            const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+            const diaNombre = diasSemana[fechaSel.getDay()];
+            const snap = await getDoc(doc(db, "configuracion", diaNombre));
+            
+            const formatAMPM = (timeStr) => {
+                if (!timeStr) return "";
+                let [hours, minutes] = timeStr.split(':');
+                let ampm = hours >= 12 ? 'PM' : 'AM';
+                hours = hours % 12;
+                hours = hours ? hours : 12; 
+                return `${hours}:${minutes} ${ampm}`;
+            };
+
+            if (!snap.exists() || !snap.data().abierto) {
+                msg.innerHTML = "Lo lamentamos, este día no se laborará.";
+                document.getElementById('categorias-container').style.display = "none";
+                return;
+            }
+            
+            const data = snap.data();
+            const apertura = formatAMPM(data.apertura || "08:00");
+            const cierre = formatAMPM(data.cierre || "18:00");
+            
+            const maxCitas = data.limite ? parseInt(data.limite) : 0;
+            if (maxCitas > 0) {
+                const qCitas = query(collection(db, "citas"), where("fecha", "==", fechaVal));
+                const totalCitas = (await getDocs(qCitas)).size;
+                if (totalCitas >= maxCitas) { 
+                    msg.innerHTML = "Lo lamentamos, ya no hay cupos disponibles para este día."; 
+                    document.getElementById('categorias-container').style.display = "none";
+                    return; 
+                }
+            }
+            
+            msg.innerHTML = `Día disponible. Horarios de atención: ${apertura} a ${cierre}.`;
+            const container = document.getElementById('categorias-container');
+            container.style.display = "block";
+            container.innerHTML = "<strong>Seleccione categoría:</strong><br>";
+            (await getDocs(collection(db, "categorias"))).forEach(d => container.innerHTML += `<button class="btn-cat" onclick="cargarSubs('${d.data().nombre}')">${d.data().nombre}</button>`);
+        };
+
+        window.cargarSubs = async (cat) => {
+            window.selCat = cat;
+            const container = document.getElementById('subcategorias-container');
+            container.style.display = "block";
+            container.innerHTML = "<strong>Seleccione servicio:</strong><br>";
+            (await getDocs(collection(db, "servicios"))).forEach(d => { if(d.data().categoria === cat) container.innerHTML += `<button class="btn-sub" onclick="prepararForm('${d.data().nombre}')">${d.data().nombre}</button>`; });
+        };
+        window.prepararForm = (sub) => { window.selSub = sub; document.getElementById('formulario-reserva').style.display = "block"; };
+        window.solicitarCita = async () => {
+            const horaActual = new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
+            const datos = { fecha: document.getElementById('fecha-cita').value, nombre: document.getElementById('nombre').value, apellido: document.getElementById('apellido').value, telefono: document.getElementById('telefono').value, direccion: document.getElementById('direccion').value, categoria: window.selCat, subcategoria: window.selSub, hora: horaActual };
+            await addDoc(collection(db, "citas"), datos);
+            const snapWpp = await getDoc(doc(db, "configuracion", "whatsapp"));
+            const numWpp = snapWpp.exists() ? snapWpp.data().numero : "";
+            const mensaje = `Solicitud de cita: ${datos.nombre} ${datos.apellido}, Fecha: ${datos.fecha}, Servicio: ${datos.subcategoria}, Dirección: ${datos.direccion}`;
+            window.open(`https://wa.me/${numWpp}?text=${encodeURIComponent(mensaje)}`, '_blank');
+            document.getElementById('modal-confirmacion').style.display = "flex";
+        };
+    </script>
+</body>
+</html>
